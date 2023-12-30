@@ -1,4 +1,4 @@
-package com.appsbyherman.trafikmeddelanden
+package com.appsbyherman.trafikinformation
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,7 +13,7 @@ class StartReceiver : BroadcastReceiver() {
             Intent(context, EndlessService::class.java).also {
                 it.action = Actions.START.name
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Log.d("com.appsbyherman.trafikmeddelanden.StartReceiver","Starting the service in >=26 Mode from a BroadcastReceiver")
+                    Log.d("com.appsbyherman.trafikinformation.StartReceiver","Starting the service in >=26 Mode from a BroadcastReceiver")
                     context.startForegroundService(it)
                     return
                 }

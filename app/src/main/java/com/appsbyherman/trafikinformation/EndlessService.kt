@@ -1,4 +1,4 @@
-package com.appsbyherman.trafikmeddelanden
+package com.appsbyherman.trafikinformation
 
 import android.app.AlarmManager
 import android.app.Notification

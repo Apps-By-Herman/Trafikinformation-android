@@ -1,4 +1,4 @@
-package com.appsbyherman.trafikmeddelanden
+package com.appsbyherman.trafikinformation
 
 enum class Actions {
     START,

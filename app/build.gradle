@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.appsbyherman.trafikmeddelanden'
+    namespace 'com.appsbyherman.trafikinformation'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.appsbyherman.trafikmeddelanden"
+        applicationId "com.appsbyherman.trafikinformation"
         minSdk 24
         targetSdk 34
         versionCode 1

@@ -1,4 +1,4 @@
-package com.appsbyherman.trafikmeddelanden
+package com.appsbyherman.trafikinformation
 
 import android.content.Intent
 import android.os.Build
@@ -13,8 +13,6 @@ class MainActivity : AppCompatActivity() {
     * - Upon starting app show map as in rastplatser and situations within 200 kilometers?
     *   - If position is allowed, should be asked automatically
     *   - If not, show all within sweden?
-    * - Rename to Trafikinformation
-    * - Make this open source
     * - Use view models...
     * - Choose if use in foreground or background
     *   - Foreground: Map as in rastplatser with icons for each specific situation

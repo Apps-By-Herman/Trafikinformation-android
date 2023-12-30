@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Trafikmeddelanden"
+rootProject.name = "Trafikinformation"
 include ':app'
