@@ -7,6 +7,24 @@ import android.os.Bundle
 import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
+
+    /*
+    * TODO
+    * - Upon starting app show map as in rastplatser and situations within 200 kilometers?
+    *   - If position is allowed, should be asked automatically
+    *   - If not, show all within sweden?
+    * - Rename to Trafikinformation
+    * - Make this open source
+    * - Use view models...
+    * - Choose if use in foreground or background
+    *   - Foreground: Map as in rastplatser with icons for each specific situation
+    * - Send local notification when new situation occurs
+    *   - Background: local push notification
+    *   - Foreground: some other type of notification?
+    * - Is there a way of automatically start a location service when start driving?
+    * */
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
