@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Trafikinformation</string>
+    <string name="main_activity_double_back_press_to_exit_message">Tryck tillbaka igen för att avsluta</string>
+</resources>

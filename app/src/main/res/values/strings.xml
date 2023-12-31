@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Trafikinformation</string>
+    <string name="app_name">Traffic information Sweden</string>
+    <string name="main_activity_double_back_press_to_exit_message">Press back again to exit</string>
 </resources>
