@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Traffic information Sweden</string>
     <string name="main_activity_double_back_press_to_exit_message">Press back again to exit</string>
+    <string name="fragment_home_location_error">Could not find location, please check that location services are enabled and try again</string>
+    <string name="fragment_home_rest_areas_error">Could not retrieve situations</string>
+    <string name="fragment_home_retry">Try again</string>
 </resources>

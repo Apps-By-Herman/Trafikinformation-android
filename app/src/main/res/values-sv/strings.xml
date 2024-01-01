@@ -2,4 +2,7 @@
 <resources>
     <string name="app_name">Trafikinformation</string>
     <string name="main_activity_double_back_press_to_exit_message">Tryck tillbaka igen för att avsluta</string>
+    <string name="fragment_home_location_error">Kunde inte hitta plats, kontrollera att platstjänster är på och försök igen</string>
+    <string name="fragment_home_rest_areas_error">Trafikinformation kunde inte hämtas</string>
+    <string name="fragment_home_retry">Försök igen</string>
 </resources>
