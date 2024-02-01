@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.SyncStateContract
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -32,6 +33,7 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.overlay.Marker
+import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MainActivity : AppCompatActivity() {
@@ -140,18 +142,28 @@ class MainActivity : AppCompatActivity() {
                     snippet = deviation.message
                     position = Helpers.getGeoPoint(deviation.geometry.point.wgs84)
                     icon =  ContextCompat.getDrawable(this@MainActivity,
-                        // TODO: Fix this, get correct icon from api
                         when (deviation.iconId) {
-                            "ferryDepartureOnSchedule" -> R.drawable.ic_launcher_foreground
-                            "trafficMessage" -> R.drawable.ic_launcher_foreground
-                            "roadwork" -> R.drawable.ic_launcher_foreground
-                            "roadClosed" -> R.drawable.ic_launcher_foreground
-                            else -> R.drawable.ic_launcher_foreground
+                            "ferryDepartureOnSchedule" -> R.drawable.ferry_departure_on_schedule
+                            "trafficMessage" -> R.drawable.traffic_message
+                            "roadwork" -> R.drawable.roadwork
+                            "roadClosed" -> R.drawable.road_closed
+                            else -> throw Exception("No icon found for ${deviation.iconId}")
                     })
+
                     setOnMarkerClickListener { _, _ ->
-                        //TODO: Open dialog/popup thingy from bottom/new activity with more info about situation
+                        Log.d(debugTag, "------------------- Clicked on marker -----------------")
+                        Log.d(debugTag, "data: $deviation")
+
+                        val modalBottomSheet = ModalBottomSheet().apply {
+                            arguments = Bundle().apply {
+                                // TODO: Continue here pass all data to modal bottom sheet and make it taller and prettier
+                            }
+                        }
+                        modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
+
                         return@setOnMarkerClickListener true
                     }
+
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                 }
 

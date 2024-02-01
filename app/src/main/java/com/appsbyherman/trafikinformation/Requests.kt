@@ -57,21 +57,21 @@ class Requests {
 
             val call = builder.endpoint(requestBody)
 
-            val response = try {
+            val rawResponse = try {
                 call.execute()
             } catch (e: Exception) {
                 Log.d("RequestsClass", e.stackTraceToString())
                 return emptyList()
             }
 
-            if (!response.isSuccessful) {
-                Log.d("RequestsClass", response.errorBody()?.string().toString())
+            if (!rawResponse.isSuccessful) {
+                Log.d("RequestsClass", rawResponse.errorBody()?.string().toString())
                 return emptyList()
             }
 
-            val parentResponse = response.body() ?: return emptyList()
+            val response = rawResponse.body() ?: return emptyList()
 
-            return parentResponse.response.result.first().situations
+            return response.result.firstOrNull()?.situations ?: emptyList()
         }
     }
 }

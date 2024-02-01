@@ -31,7 +31,7 @@ data class Deviation(
     @SerializedName("RoadNumber") val roadNumber: String,
     @SerializedName("RoadNumberNumeric") val roadNumberNumeric: Int,
     @SerializedName("SafetyRelatedMessage") val safetyRelatedMessage: Boolean,
-    @SerializedName("Schedule") val schedule: List<Any>,
+    @SerializedName("Schedule") val schedule: List<Schedule>,
     @SerializedName("SeverityCode") val severityCode: Int,
     @SerializedName("SeverityText") val severityText: String,
     @SerializedName("StartTime") val startTime: String,
@@ -39,4 +39,8 @@ data class Deviation(
     @SerializedName("TrafficRestrictionType") val trafficRestrictionType: String,
     @SerializedName("ValidUntilFurtherNotice") val validUntilFurtherNotice: Boolean,
     @SerializedName("WebLink") val webLink: String,
-)
+) {
+    override fun toString(): String {
+        return "Deviation(AffectedDirection=$affectedDirection, AffectedDirectionValue=$affectedDirectionValue, CountryNo=$countyNo, CreationTime=$creationTime, Creator=$creator, EndTime=$endTime, Geometry=$geometry, Header=$header, IconId=$iconId, Image=$image, HasFullSizePhoto=$hasFullSizePhoto, Url=$url, JourneyReference=$journeyReference, LocationDescriptor=$locationDescriptor, ManagedCause=$managedCause, Message=$message, MessageCode=$messageCode, MessageCodeValue=$messageCodeValue, MessageType=$messageType, MessageTypeValue=$messageTypeValue, NumberOfLanesRestricted=$numberOfLanesRestricted, PositionalDescription=$positionalDescription, RoadName=$roadName, RoadNumber=$roadNumber, RoadNumberNumeric=$roadNumberNumeric, SafetyRelatedMessage=$safetyRelatedMessage, Schedule=$schedule, SeverityCode=$severityCode, SeverityText=$severityText, StartTime=$startTime, TemporaryLimit=$temporaryLimit, TrafficRestrictionType=$trafficRestrictionType, ValidUntilFurtherNotice=$validUntilFurtherNotice, WebLink=$webLink)"
+    }
+}
