@@ -12,14 +12,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.provider.SyncStateContract
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import com.appsbyherman.trafikinformation.databinding.ActivityMainBinding
@@ -33,7 +30,6 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.infowindow.InfoWindow
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MainActivity : AppCompatActivity() {
@@ -106,7 +102,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getSituations(geoPoint: GeoPoint?, countyCode: Int? = null) {
         lifecycleScope.launch {
-            val situations = withContext(Dispatchers.IO) { Requests.getSituations(geoPoint, countyCode = countyCode) }
+            val situations = withContext(Dispatchers.IO) { Requests.getSituations(null, countyCode = countyCode) }
 
             binding.pbLoading.visibility = View.GONE
 
@@ -137,9 +133,13 @@ class MainActivity : AppCompatActivity() {
 
         for (situation in situations) {
             for (deviation in situation.deviation) {
+
+                // TODO: If we have a point, we should use a marker, if we have a line, we should use a polyline
+                // TODO: Seems there is multiple deviations with the same coordinates, we should only show one marker for each coordinate
+
+                if (deviation.geometry.point.wgs84.isEmpty()) continue
+
                 val marker = Marker(binding.map).apply {
-                    title = deviation.header
-                    snippet = deviation.message
                     position = Helpers.getGeoPoint(deviation.geometry.point.wgs84)
                     icon =  ContextCompat.getDrawable(this@MainActivity,
                         when (deviation.iconId) {
@@ -147,19 +147,23 @@ class MainActivity : AppCompatActivity() {
                             "trafficMessage" -> R.drawable.traffic_message
                             "roadwork" -> R.drawable.roadwork
                             "roadClosed" -> R.drawable.road_closed
+                            "ferryServiceNotOperating" -> R.drawable.ferry_service_not_operating
+                            "ferryReplacedByIceRoad" -> R.drawable.ferry_replaced_by_ice_road
+                            "roadSurfaceInformation" -> R.drawable.road_surface_information
+                            "roadAccident" -> R.drawable.road_accident
+                            "trafficJamMessage" -> R.drawable.traffic_jam_message
+                            // TODO: Instead of this else, we should get the icon from https://api.trafikinfo.trafikverket.se/v1/icons/roadAccident and if it fails, use some default icon
                             else -> throw Exception("No icon found for ${deviation.iconId}")
                     })
 
                     setOnMarkerClickListener { _, _ ->
-                        Log.d(debugTag, "------------------- Clicked on marker -----------------")
-                        Log.d(debugTag, "data: $deviation")
-
-                        val modalBottomSheet = ModalBottomSheet().apply {
+                        val bottomSheet = DeviationDialog().apply {
                             arguments = Bundle().apply {
-                                // TODO: Continue here pass all data to modal bottom sheet and make it taller and prettier
+                                putParcelable(DeviationDialog.deviationTag, BaseParcelable(deviation))
                             }
                         }
-                        modalBottomSheet.show(supportFragmentManager, ModalBottomSheet.TAG)
+
+                        bottomSheet.show(supportFragmentManager, DeviationDialog.TAG)
 
                         return@setOnMarkerClickListener true
                     }
