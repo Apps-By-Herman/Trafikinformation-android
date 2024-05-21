@@ -13,5 +13,16 @@ class Helpers {
 
             return GeoPoint(lat, long)
         }
+
+        fun getWGS84(geoPoint: GeoPoint): String {
+            return "(${geoPoint.longitude} ${geoPoint.latitude})"
+        }
+
+        fun moveGeoPoint(geoPoint: GeoPoint, metersNorth: Double, metersEast: Double): GeoPoint {
+            val degreesNorth = metersNorth / 111139
+            val degreesEast = metersEast / 111139
+
+            return GeoPoint(geoPoint.latitude + degreesNorth, geoPoint.longitude + degreesEast)
+        }
     }
 }

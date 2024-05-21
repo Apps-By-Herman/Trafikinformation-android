@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
@@ -33,19 +34,16 @@ import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 class MainActivity : AppCompatActivity() {
-
-    /*
-    * TODO
-    * - Add setting to set distance to locations
-    * - If chosen area code, one can keep polling for new messages and show as push notifications
-    *   that is pulled in a regular interval
+    /* TODO
     * - Implement a way to show all situations in a list
-    * - Implement ads
-    *   - Remove for f-droid version in build config
-    *   - Implement in app purchase to buy non ads version
+    * - if we have a line, we should show it somehow.
+    * - Add setting to set distance to locations, default 10 km, max 100 km? + lots of others settings
     * - Make it possible to use in background to retrieve push notifications when new situations occurs
-    * - Is there a way of automatically start a location service when start driving?
-    * */
+    *   - If chosen area code, one can keep polling for new messages and show as push notifications
+    *   that is pulled in a regular interval
+    * - Implement ads
+    *   - Implement in app purchase to buy non ads version
+    * - Is there a way of automatically start a location service when start driving? */
 
     private val debugTag = "MainActivity"
     private lateinit var binding: ActivityMainBinding
@@ -102,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun getSituations(geoPoint: GeoPoint?, countyCode: Int? = null) {
         lifecycleScope.launch {
-            val situations = withContext(Dispatchers.IO) { Requests.getSituations(null, countyCode = countyCode) }
+            val situations = withContext(Dispatchers.IO) { Requests.getSituations(geoPoint, countyCode = countyCode) }
 
             binding.pbLoading.visibility = View.GONE
 
@@ -132,12 +130,25 @@ class MainActivity : AppCompatActivity() {
         binding.map.overlays.add(clusterMarkers)
 
         for (situation in situations) {
+
+            // If more than one deviation with same coordinates show each marker but with a bit
+            // different position, to get them to show on map
+            for (index in situation.deviation.indices) {
+                val deviation = situation.deviation[index]
+
+                // We need a point to show a marker
+                if (deviation.geometry.point.wgs84.isEmpty())
+                    continue
+
+                var geoPoint = Helpers.getGeoPoint(deviation.geometry.point.wgs84)
+                geoPoint = Helpers.moveGeoPoint(geoPoint, 10.0 * index, 10.0 * index)
+                deviation.geometry.point.wgs84 = Helpers.getWGS84(geoPoint)
+            }
+
             for (deviation in situation.deviation) {
-
-                // TODO: If we have a point, we should use a marker, if we have a line, we should use a polyline
-                // TODO: Seems there is multiple deviations with the same coordinates, we should only show one marker for each coordinate
-
-                if (deviation.geometry.point.wgs84.isEmpty()) continue
+                // We need a point to show a marker
+                if (deviation.geometry.point.wgs84.isEmpty())
+                    continue
 
                 val marker = Marker(binding.map).apply {
                     position = Helpers.getGeoPoint(deviation.geometry.point.wgs84)
@@ -152,18 +163,20 @@ class MainActivity : AppCompatActivity() {
                             "roadSurfaceInformation" -> R.drawable.road_surface_information
                             "roadAccident" -> R.drawable.road_accident
                             "trafficJamMessage" -> R.drawable.traffic_jam_message
-                            // TODO: Instead of this else, we should get the icon from https://api.trafikinfo.trafikverket.se/v1/icons/roadAccident and if it fails, use some default icon
-                            else -> throw Exception("No icon found for ${deviation.iconId}")
+                            else ->  {
+                                Log.d(debugTag, "Unknown iconId: ${deviation.iconId}")
+                                R.drawable.traffic_message
+                            }
                     })
 
                     setOnMarkerClickListener { _, _ ->
-                        val bottomSheet = DeviationDialog().apply {
+                        val deviationDialog = DeviationDialog().apply {
                             arguments = Bundle().apply {
-                                putParcelable(DeviationDialog.deviationTag, BaseParcelable(deviation))
+                                putParcelable(DeviationDialog.DEVIATION, BaseParcelable(deviation))
                             }
                         }
 
-                        bottomSheet.show(supportFragmentManager, DeviationDialog.TAG)
+                        deviationDialog.show(supportFragmentManager, DeviationDialog.TAG)
 
                         return@setOnMarkerClickListener true
                     }
@@ -291,7 +304,7 @@ class MainActivity : AppCompatActivity() {
         binding.map.controller.apply {
             animateTo(GeoPoint(location))
 
-            setZoom(8.0)
+            setZoom(11.0)
         }
     }
 

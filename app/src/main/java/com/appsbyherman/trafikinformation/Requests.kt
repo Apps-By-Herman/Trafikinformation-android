@@ -9,7 +9,7 @@ import org.osmdroid.util.GeoPoint
 class Requests {
     companion object {
         fun getSituations(geoPoint: GeoPoint? = null,
-                          distanceToGeoPointInMeters: Int? = 10000,
+                          distanceToGeoPointInMeters: Int? = 30000,
                           countyCode: Int? = null): List<Situation> {
 
             val builder = RequestBuilder.buildService()
